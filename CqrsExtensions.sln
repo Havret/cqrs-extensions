@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CqrsExtensions", "src\CqrsExtensions\CqrsExtensions.csproj", "{59ECFD0F-A5E5-4A2B-B254-CA36FFEECA0E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E2992338-A6A2-48C7-BD86-F217FCC05F88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApplication", "samples\SampleWebApplication\SampleWebApplication.csproj", "{628E3606-BDCC-451F-8642-EAAA28745E76}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59ECFD0F-A5E5-4A2B-B254-CA36FFEECA0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59ECFD0F-A5E5-4A2B-B254-CA36FFEECA0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59ECFD0F-A5E5-4A2B-B254-CA36FFEECA0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59ECFD0F-A5E5-4A2B-B254-CA36FFEECA0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{628E3606-BDCC-451F-8642-EAAA28745E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{628E3606-BDCC-451F-8642-EAAA28745E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{628E3606-BDCC-451F-8642-EAAA28745E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{628E3606-BDCC-451F-8642-EAAA28745E76}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{628E3606-BDCC-451F-8642-EAAA28745E76} = {E2992338-A6A2-48C7-BD86-F217FCC05F88}
+	EndGlobalSection
+EndGlobal
