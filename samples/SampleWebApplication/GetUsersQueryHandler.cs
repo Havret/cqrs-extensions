@@ -11,7 +11,7 @@ namespace SampleWebApplication
 
         public GetUsersQueryHandler(UsersRepository usersRepository) => _usersRepository = usersRepository;
 
-        public Task<IReadOnlyList<User>> Handle(GetUsers query, CancellationToken cancellationToken)
+        public Task<IReadOnlyList<User>> HandleAsync(GetUsers query, CancellationToken cancellationToken)
         {
             return Task.FromResult(_usersRepository.GetUsers);
         }

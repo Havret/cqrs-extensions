@@ -1,5 +1,9 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CqrsExtensions
 {
@@ -7,18 +11,30 @@ namespace CqrsExtensions
     {
         public static IServiceCollection AddCqrs(this IServiceCollection serviceCollection, Assembly assembly)
         {
-            serviceCollection.AddScoped<ICqrsDispatcher, CqrsDispatcher>();
-            
+            var queryDispatchers = new Dictionary<Type, QueryDispatcherBase>();
+
             foreach (var type in assembly.GetTypes())
             {
                 foreach (var @interface in type.GetInterfaces())
                 {
-                    if (@interface.GetGenericTypeDefinition() == typeof(IQueryHandler<,>))
+                    var genericTypeDefinition = @interface.GetGenericTypeDefinition();
+                    if (genericTypeDefinition == typeof(IQueryHandler<,>))
                     {
-                        serviceCollection.AddScoped(@interface, type);
+                        serviceCollection.TryAddScoped(@interface, type);
+                        
+                        var queryType = @interface.GetGenericArguments().First();
+                        var queryResultType = @interface.GetGenericArguments().Last();
+                        
+                        var queryDispatcherType = typeof(QueryDispatcher<,>).MakeGenericType(queryType, queryResultType);
+                        var queryDispatcher = (QueryDispatcherBase) Activator.CreateInstance(queryDispatcherType)!;
+
+                        queryDispatchers.Add(queryType, queryDispatcher);
                     }
                 }
             }
+            
+            serviceCollection.AddScoped<ICqrsDispatcher>(provider => new CqrsDispatcher(provider, queryDispatchers));
+
             return serviceCollection;
         }
     }

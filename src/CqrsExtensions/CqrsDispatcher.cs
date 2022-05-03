@@ -1,47 +1,24 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CqrsExtensions
 {
-    public class CqrsDispatcher : ICqrsDispatcher
+    internal class CqrsDispatcher : ICqrsDispatcher
     {
-        private static readonly ConcurrentDictionary<Type, QueryDispatcherBase> QueryDispatchers = new();
-
         private readonly IServiceProvider _serviceProvider;
+        private readonly Dictionary<Type, QueryDispatcherBase> _queryDispatchers;
 
-        public CqrsDispatcher(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
+        public CqrsDispatcher(IServiceProvider serviceProvider, Dictionary<Type, QueryDispatcherBase> queryDispatchers)
+        {
+            _serviceProvider = serviceProvider;
+            _queryDispatchers = queryDispatchers;
+        }
 
         public Task<TResult> Dispatch<TResult>(IQuery<TResult> query, CancellationToken cancellationToken)
         {
-            var queryDispatcher = QueryDispatchers.GetOrAdd(query.GetType(), queryType =>
-            {
-                var makeGenericType = typeof(QueryDispatcher<,>).MakeGenericType(queryType, typeof(TResult));
-                return ((QueryDispatcherBase) Activator.CreateInstance(makeGenericType))!;
-            });
-            return (Task<TResult>) queryDispatcher.Dispatch(query, _serviceProvider, cancellationToken);
-        }
-    }
-
-    internal abstract class QueryDispatcherBase
-    {
-        public abstract object Dispatch(object query, IServiceProvider serviceProvider, CancellationToken cancellationToken);
-    }
-
-    internal class QueryDispatcher<TQuery, TResult> : QueryDispatcherBase where TQuery : IQuery<TResult>
-    {
-        public override object Dispatch(object query,IServiceProvider serviceProvider, CancellationToken cancellationToken)
-        {
-            return Dispatch((TQuery) query, serviceProvider, cancellationToken);
-        }
-
-        private static async Task<TResult> Dispatch(TQuery query,IServiceProvider serviceProvider, CancellationToken cancellationToken)
-        {
-            var serviceScope = serviceProvider.CreateScope();
-            var queryHandler = serviceScope.ServiceProvider.GetRequiredService<IQueryHandler<TQuery, TResult>>();
-            return await queryHandler.Handle(query, cancellationToken);
+            return (Task<TResult>) _queryDispatchers[query.GetType()].Dispatch(query, _serviceProvider, cancellationToken);
         }
     }
 }
